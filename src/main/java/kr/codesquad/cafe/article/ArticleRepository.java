@@ -16,9 +16,9 @@ public class ArticleRepository {
             "INSERT INTO ARTICLE(WRITER_USERID, WRITER_NAME, TITLE, CONTENTS) VALUES(?, ?, ?, ?)";
     private static final String SQL_UPDATE_ARTICLE =
             "UPDATE ARTICLE SET WRITER_NAME=?, TITLE=?, CONTENTS=? WHERE ID=?";
-    private static final String SQL_FIND_ARTICLE = "SELECT * FROM ARTICLE WHERE ID = ?";
-    private static final String SQL_FIND_ARTICLE_ALL = "SELECT * FROM ARTICLE";
-    private static final String SQL_DELETE_ARTICLE = "DELETE FROM ARTICLE WHERE ID=?";
+    private static final String SQL_FIND_ARTICLE = "SELECT * FROM ARTICLE WHERE DELETED=FALSE AND ID=?";
+    private static final String SQL_FIND_ARTICLE_ALL = "SELECT * FROM ARTICLE WHERE DELETED=FALSE";
+    private static final String SQL_DELETE_ARTICLE = "UPDATE ARTICLE SET DELETED=TRUE WHERE ID=?";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired

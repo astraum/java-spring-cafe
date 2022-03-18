@@ -1,6 +1,5 @@
 package kr.codesquad.cafe.article.reply;
 
-import kr.codesquad.cafe.article.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -28,7 +27,16 @@ public class ReplyRepository {
     }
 
     public List<Reply> findByArticleId(long articleId) {
-        return jdbcTemplate.query("SELECT * FROM REPLY WHERE ARTICLE_ID=?", replyRowMapper(), articleId);
+        return jdbcTemplate.query("SELECT * FROM REPLY WHERE DELETED=FALSE AND ARTICLE_ID=?", replyRowMapper(), articleId);
+    }
+
+    public Optional<Reply> findOne(long id) {
+        return jdbcTemplate.query("SELECT * FROM REPLY WHERE DELETED=FALSE AND ID=?", replyRowMapper(), id)
+                .stream().findAny();
+    }
+
+    public void deleteById(long id) {
+        jdbcTemplate.update("UPDATE REPLY SET DELETED=TRUE WHERE ID=?", id);
     }
 
     private RowMapper<Reply> replyRowMapper() {
@@ -43,14 +51,5 @@ public class ReplyRepository {
 
             return reply;
         });
-    }
-
-    public Optional<Reply> findOne(long id) {
-        return jdbcTemplate.query("SELECT * FROM REPLY WHERE ID=?", replyRowMapper(), id)
-                .stream().findAny();
-    }
-
-    public void deleteById(long id) {
-        jdbcTemplate.update("DELETE FROM REPLY WHERE ID=?", id);
     }
 }

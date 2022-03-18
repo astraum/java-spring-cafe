@@ -9,7 +9,8 @@ CREATE TABLE ARTICLE
     writer_userid VARCHAR(255),
     writer_name   VARCHAR(255),
     title         VARCHAR(255),
-    contents      VARCHAR(65535)
+    contents      VARCHAR(65535),
+    deleted       BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE REPLY
@@ -19,7 +20,8 @@ CREATE TABLE REPLY
     timestamp     TIMESTAMP DEFAULT NOW(),
     writer_userid VARCHAR(255),
     writer_name   VARCHAR(255),
-    contents      VARCHAR(65535)
+    contents      VARCHAR(65535),
+    deleted       BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE CAFE_USER
