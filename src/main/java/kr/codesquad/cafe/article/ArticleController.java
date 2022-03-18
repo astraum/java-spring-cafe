@@ -107,4 +107,20 @@ public class ArticleController {
 
         return "redirect:/questions/{id}";
     }
+
+    @DeleteMapping("/questions/{articleId}/answers/{id}")
+    public String deleteReply(@PathVariable("articleId") long articleId,
+                              @PathVariable("id") long id,
+                              HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        String writerUserId = replyService.retrieve(id).getWriterUserId();
+
+        if (!currentUser.userIdIs(writerUserId)) {
+            return "redirect:/badRequest";
+        }
+
+        replyService.deleteById(id);
+
+        return "redirect:/questions/{articleId}";
+    }
 }
