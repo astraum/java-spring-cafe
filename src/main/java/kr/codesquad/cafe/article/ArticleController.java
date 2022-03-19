@@ -43,8 +43,8 @@ public class ArticleController {
         return "redirect:/";
     }
 
-    @GetMapping("/questions/{id}")
-    public String viewQuestion(@PathVariable("id") long id, Model model) {
+    @GetMapping("/questions/{articleId}")
+    public String viewQuestion(@PathVariable("articleId") long id, Model model) {
         List<Reply> replies = replyService.retrieveByArticleId(id);
 
         model.addAttribute("article", articleService.retrieve(id));
@@ -54,21 +54,16 @@ public class ArticleController {
         return "qna/show";
     }
 
-    @GetMapping("/questions/{id}/form")
-    public String viewUpdateForm(@PathVariable("id") long id, Model model) {
+    @GetMapping("/questions/{articleId}/form")
+    public String viewUpdateForm(@PathVariable("articleId") long id, Model model) {
         model.addAttribute("article", articleService.retrieve(id));
 
         return "qna/updateForm";
     }
 
-    @PutMapping("/questions/{id}/update")
-    public String processUpdateForm(@PathVariable("id") long id, ArticleCreationForm form, HttpSession session) {
+    @PutMapping("/questions/{articleId}/update")
+    public String processUpdateForm(@PathVariable("articleId") long id, ArticleCreationForm form, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
-        String writerUserId = articleService.retrieve(id).getWriterUserId();
-
-        if (!currentUser.userIdIs(writerUserId)) {
-            return "redirect:/badRequest";
-        }
 
         Article article = new Article();
         article.setId(id);
@@ -77,25 +72,18 @@ public class ArticleController {
         article.setContents(form.getContents());
         articleService.update(article);
 
-        return "redirect:/questions/{id}";
+        return "redirect:/questions/{articleId}";
     }
 
-    @DeleteMapping("/questions/{id}")
-    public String deleteArticle(@PathVariable("id") long id, HttpSession session) {
-        User currentUser = (User) session.getAttribute("currentUser");
-        String writerUserId = articleService.retrieve(id).getWriterUserId();
-
-        if (!currentUser.userIdIs(writerUserId)) {
-            return "redirect:/badRequest";
-        }
-
+    @DeleteMapping("/questions/{articleId}/delete")
+    public String deleteArticle(@PathVariable("articleId") long id, HttpSession session) {
         articleService.deleteById(id);
 
         return "redirect:/";
     }
 
-    @PostMapping("/questions/{id}/answers")
-    public String processReply(@PathVariable("id") long id, String contents, HttpSession session) {
+    @PostMapping("/questions/{articleId}/answers")
+    public String processReply(@PathVariable("articleId") long id, String contents, HttpSession session) {
         Reply reply = new Reply();
         User writer = (User) session.getAttribute("currentUser");
         reply.setArticleId(id);
@@ -105,12 +93,11 @@ public class ArticleController {
 
         replyService.post(reply);
 
-        return "redirect:/questions/{id}";
+        return "redirect:/questions/{articleId}";
     }
 
-    @DeleteMapping("/questions/{articleId}/answers/{id}")
-    public String deleteReply(@PathVariable("articleId") long articleId,
-                              @PathVariable("id") long id,
+    @DeleteMapping("/questions/*/answers/{replyId}")
+    public String deleteReply(@PathVariable("replyId") long id,
                               HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         String writerUserId = replyService.retrieve(id).getWriterUserId();

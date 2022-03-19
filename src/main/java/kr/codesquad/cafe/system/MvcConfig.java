@@ -33,7 +33,7 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/users/*/form");
 
         registry.addInterceptor(writerAuthenticationInterceptor())
-                .addPathPatterns("/questions/*/form");
+                .addPathPatterns("/questions/*/*");
     }
 
     @Bean
