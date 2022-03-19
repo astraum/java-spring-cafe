@@ -1,8 +1,9 @@
 package kr.codesquad.cafe.system;
 
-import kr.codesquad.cafe.system.intercepter.LoginRequiredInterceptor;
-import kr.codesquad.cafe.system.intercepter.UserAuthenticationInterceptor;
-import kr.codesquad.cafe.system.intercepter.WriterAuthenticationInterceptor;
+import kr.codesquad.cafe.system.interceptor.LoginRequiredInterceptor;
+import kr.codesquad.cafe.system.interceptor.ReplyAuthenticationInterceptor;
+import kr.codesquad.cafe.system.interceptor.UserAuthenticationInterceptor;
+import kr.codesquad.cafe.system.interceptor.ArticleAuthenticationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -30,10 +31,15 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/users/**");
 
         registry.addInterceptor(userAuthenticationInterceptor())
-                .addPathPatterns("/users/*/form");
+                .addPathPatterns("/users/{userId}/form");
 
-        registry.addInterceptor(writerAuthenticationInterceptor())
-                .addPathPatterns("/questions/*/*");
+        registry.addInterceptor(articleAuthenticationInterceptor())
+                .addPathPatterns("/questions/{articleId}/form")
+                .addPathPatterns("/questions/{articleId}/update")
+                .addPathPatterns("/questions/{articleId}/delete");
+
+        registry.addInterceptor(replyAuthenticationInterceptor())
+                .addPathPatterns("/questions/{articleId}/answers/{replyId}/delete");
     }
 
     @Bean
@@ -47,7 +53,12 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public WriterAuthenticationInterceptor writerAuthenticationInterceptor() {
-        return new WriterAuthenticationInterceptor();
+    public ArticleAuthenticationInterceptor articleAuthenticationInterceptor() {
+        return new ArticleAuthenticationInterceptor();
+    }
+
+    @Bean
+    public ReplyAuthenticationInterceptor replyAuthenticationInterceptor() {
+        return new ReplyAuthenticationInterceptor();
     }
 }

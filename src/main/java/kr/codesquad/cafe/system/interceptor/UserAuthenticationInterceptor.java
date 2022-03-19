@@ -1,4 +1,4 @@
-package kr.codesquad.cafe.system.intercepter;
+package kr.codesquad.cafe.system.interceptor;
 
 import kr.codesquad.cafe.user.User;
 import org.springframework.web.servlet.HandlerInterceptor;
