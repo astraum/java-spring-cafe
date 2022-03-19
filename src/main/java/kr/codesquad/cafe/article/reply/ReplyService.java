@@ -33,4 +33,8 @@ public class ReplyService {
     public void deleteById(long id) {
         repository.deleteById(id);
     }
+
+    public void deleteByArticleId(long articleId) {
+        repository.deleteByArticleId(articleId);
+    }
 }

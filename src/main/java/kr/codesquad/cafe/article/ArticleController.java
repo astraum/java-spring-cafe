@@ -76,10 +76,24 @@ public class ArticleController {
     }
 
     @DeleteMapping("/questions/{articleId}/delete")
-    public String deleteArticle(@PathVariable("articleId") long id) {
-        articleService.deleteById(id);
+    public String deleteArticle(@PathVariable("articleId") long articleId, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        if (articleHasReplyByOtherUser(articleId, currentUser)) {
+            return "redirect:/badRequest";
+        }
+
+        replyService.deleteByArticleId(articleId);
+        articleService.deleteById(articleId);
 
         return "redirect:/";
+    }
+
+    private boolean articleHasReplyByOtherUser(long articleId, User currentUser) {
+        return replyService.retrieveByArticleId(articleId)
+                .stream()
+                .map(Reply::getWriterUserId)
+                .anyMatch(writerUserId -> !currentUser.userIdIs(writerUserId));
     }
 
     @PostMapping("/questions/{articleId}/answers")

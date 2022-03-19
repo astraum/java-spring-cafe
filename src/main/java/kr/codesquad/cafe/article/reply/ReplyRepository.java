@@ -16,7 +16,6 @@ public class ReplyRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-
     public ReplyRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -37,6 +36,10 @@ public class ReplyRepository {
 
     public void deleteById(long id) {
         jdbcTemplate.update("UPDATE REPLY SET DELETED=TRUE WHERE ID=?", id);
+    }
+
+    public void deleteByArticleId(long articleId) {
+        jdbcTemplate.update("UPDATE REPLY SET DELETED=TRUE WHERE article_id=?", articleId);
     }
 
     private RowMapper<Reply> replyRowMapper() {
