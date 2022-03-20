@@ -28,7 +28,8 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginRequiredInterceptor())
                 .addPathPatterns("/questions/**")
-                .addPathPatterns("/users/**");
+                .addPathPatterns("/users/**")
+                .addPathPatterns("api/questions/{articleId}/answers");
 
         registry.addInterceptor(userAuthenticationInterceptor())
                 .addPathPatterns("/users/{userId}/form");

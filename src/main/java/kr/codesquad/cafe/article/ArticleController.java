@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 public class ArticleController {
@@ -45,11 +44,7 @@ public class ArticleController {
 
     @GetMapping("/questions/{articleId}")
     public String viewQuestion(@PathVariable("articleId") long id, Model model) {
-        List<Reply> replies = replyService.retrieveByArticleId(id);
-
         model.addAttribute("article", articleService.retrieve(id));
-        model.addAttribute("reply", replies);
-        model.addAttribute("replyCount", replies.size());
 
         return "qna/show";
     }
@@ -94,20 +89,6 @@ public class ArticleController {
                 .stream()
                 .map(Reply::getWriterUserId)
                 .anyMatch(writerUserId -> !currentUser.userIdIs(writerUserId));
-    }
-
-    @PostMapping("/questions/{articleId}/answers")
-    public String processReply(@PathVariable("articleId") long id, String contents, HttpSession session) {
-        Reply reply = new Reply();
-        User writer = (User) session.getAttribute("currentUser");
-        reply.setArticleId(id);
-        reply.setWriterUserId(writer.getUserId());
-        reply.setWriterName(writer.getName());
-        reply.setContents(contents);
-
-        replyService.post(reply);
-
-        return "redirect:/questions/{articleId}";
     }
 
     @DeleteMapping("/questions/{articleId}/answers/{replyId}/delete")
