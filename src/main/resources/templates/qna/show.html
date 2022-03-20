@@ -136,13 +136,11 @@
         event.preventDefault();
 
         let answerForm = $("form[name=answer]");
-        let queryString = answerForm.serialize();
-        let url = answerForm.attr("action");
 
         $.ajax({
             type: answerForm.attr("method"),
-            url: url,
-            data: queryString,
+            url: answerForm.attr("action"),
+            data: answerForm.serialize(),
             dataType: "json",
             error: function () {
                 console.log("reply failed");
@@ -168,7 +166,7 @@
                 formattedTimestamp,
                 reply.contents,
                 reply.articleId,
-                reply.replyId
+                reply.id
             );
 
             answerBody.append(template);
@@ -176,6 +174,26 @@
 
         answerBody.append($("#answerFormTemplate").html());
         $(".submit-write button[type=submit]").click(addAnswer);
+        $(".delete-answer-form button[type=submit]").click(deleteAnswer);
+    }
+
+    function deleteAnswer(event) {
+        event.preventDefault();
+
+        let deleteForm = $(this).parent();
+
+        $.ajax({
+            type: "delete",
+            url: deleteForm.attr("action"),
+            dataType: "json",
+            error: function () {
+                alert("Error: 삭제할 수 없습니다.")
+                console.log("reply deletion failed");
+            },
+            success: function (data) {
+                refreshReply(data);
+            }
+        });
     }
 </script>
 </body>

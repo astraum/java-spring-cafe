@@ -90,11 +90,4 @@ public class ArticleController {
                 .map(Reply::getWriterUserId)
                 .anyMatch(writerUserId -> !currentUser.userIdIs(writerUserId));
     }
-
-    @DeleteMapping("/questions/{articleId}/answers/{replyId}/delete")
-    public String deleteReply(@PathVariable("replyId") long id) {
-        replyService.deleteById(id);
-
-        return "redirect:/questions/{articleId}";
-    }
 }

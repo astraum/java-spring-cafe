@@ -36,4 +36,11 @@ public class ApiReplyController {
 
         return replyService.retrieveByArticleId(articleId);
     }
+
+    @DeleteMapping("/{replyId}")
+    public List<Reply> deleteReply(@PathVariable("articleId") long articleId, @PathVariable("replyId") long replyId) {
+        replyService.deleteById(replyId);
+
+        return replyService.retrieveByArticleId(articleId);
+    }
 }

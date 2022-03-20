@@ -29,7 +29,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginRequiredInterceptor())
                 .addPathPatterns("/questions/**")
                 .addPathPatterns("/users/**")
-                .addPathPatterns("api/questions/{articleId}/answers");
+                .addPathPatterns("/api/questions/{articleId}/answers");
 
         registry.addInterceptor(userAuthenticationInterceptor())
                 .addPathPatterns("/users/{userId}/form");
@@ -40,7 +40,7 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/questions/{articleId}/delete");
 
         registry.addInterceptor(replyAuthenticationInterceptor())
-                .addPathPatterns("/questions/{articleId}/answers/{replyId}/delete");
+                .addPathPatterns("/api/questions/{articleId}/answers/{replyId}");
     }
 
     @Bean
