@@ -1,6 +1,7 @@
 package kr.codesquad.cafe.article;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,12 +14,15 @@ import java.util.Optional;
 public class ArticleRepository {
 
     private static final String SQL_SAVE_ARTICLE =
-            "INSERT INTO ARTICLE(WRITER_USERID, WRITER_NAME, TITLE, CONTENTS) VALUES(?, ?, ?, ?)";
+            "INSERT INTO ARTICLE(writer_userid, writer_name, title, contents) VALUES(?, ?, ?, ?)";
     private static final String SQL_UPDATE_ARTICLE =
-            "UPDATE ARTICLE SET WRITER_NAME=?, TITLE=?, CONTENTS=? WHERE ID=?";
-    private static final String SQL_FIND_ARTICLE = "SELECT * FROM ARTICLE WHERE DELETED=FALSE AND ID=?";
-    private static final String SQL_FIND_ARTICLE_ALL = "SELECT * FROM ARTICLE WHERE DELETED=FALSE";
-    private static final String SQL_DELETE_ARTICLE = "UPDATE ARTICLE SET DELETED=TRUE WHERE ID=?";
+            "UPDATE ARTICLE SET writer_name=?, title=?, contents=? WHERE id=?";
+    private static final String SQL_FIND_ARTICLE =
+            "SELECT id, timestamp, writer_userid, writer_name, title, contents FROM ARTICLE WHERE deleted=FALSE AND id=?";
+    private static final String SQL_FIND_ARTICLE_ALL =
+            "SELECT id, timestamp, writer_userid, writer_name, title, contents FROM ARTICLE WHERE deleted=FALSE";
+    private static final String SQL_DELETE_ARTICLE =
+            "UPDATE ARTICLE SET deleted=TRUE WHERE id=?";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -37,7 +41,11 @@ public class ArticleRepository {
     }
 
     public Optional<Article> findOne(long id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_ARTICLE, articleRowMapper(), id));
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_ARTICLE, articleRowMapper(), id));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public List<Article> findAll() {
